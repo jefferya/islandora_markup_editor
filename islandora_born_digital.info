@@ -1,0 +1,7 @@
+name = "Islandora Born Digital"
+description = "Islandora module to handle born digital works"
+dependencies[] = islandora
+package = Islandora Solution Packs
+core = 7.x
+version = 7.x-dev
+
