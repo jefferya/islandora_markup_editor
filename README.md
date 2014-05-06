@@ -1,3 +1,8 @@
+BUILD STATUS
+------------
+Current build status:
+[![Build Status](https://travis-ci.org/discoverygarden/islandora_solution_pack_born_digital.png?branch=7.x.cwrcps-4)](https://travis-ci.org/discoverygarden/islandora_solution_pack_born_digital)
+
 Islandora Solution Pack Born Digital
 ====================================
 
