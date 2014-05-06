@@ -7,18 +7,18 @@
 /**
  * Implements hook_menu().
  */
-function islandora_born_digital_menu() {
+function islandora_markup_editor_menu() {
   $items['islandora/borndigital/setup/%islandora_object'] = array(
-    'title' => 'Born Digital Setup',
-    'page callback' => 'islandora_born_digital_setup',
+    'title' => 'Markup Editor Setup',
+    'page callback' => 'islandora_markup_editor_setup',
     'page arguments' => array(3),
     'type' => MENU_CALLBACK,
     'access callback' => 'islandora_object_access_callback',
     'access arguments' => array(ISLANDORA_VIEW_OBJECTS, 3),
   );
-  $items['islandora/borndigital/save_data/%islandora_object'] = array(
+  $items['islandora/markupeditor/save_data/%islandora_object'] = array(
     'title' => 'Save Data',
-    'page callback' => 'islandora_born_digital_savedata',
+    'page callback' => 'islandora_markup_editor_savedata',
     'page arguments' => array(3),
     'type' => MENU_CALLBACK,
     'access callback' => 'islandora_object_access_callback',
@@ -33,7 +33,7 @@ function islandora_born_digital_menu() {
  * @param AbstractObject $fedora_object
  *   The fedora object
  */
-function islandora_born_digital_savedata(AbstractObject $fedora_object) {
+function islandora_markup_editor_savedata(AbstractObject $fedora_object) {
   // @codingStandardsIgnoreStart
   $data = html_entity_decode(stripslashes(check_plain($_POST['text'])), ENT_QUOTES, 'UTF-8');
   $cwrc = str_replace('<br>', '<br />', $data);
@@ -53,49 +53,49 @@ function islandora_born_digital_savedata(AbstractObject $fedora_object) {
 /**
  * Implements hook_islandora_required_objects().
  */
-function islandora_born_digital_islandora_required_objects(IslandoraTuque $connection) {
-  $module_path = drupal_get_path('module', 'islandora_born_digital');
+function islandora_markup_editor_islandora_required_objects(IslandoraTuque $connection) {
+  $module_path = drupal_get_path('module', 'islandora_markup_editor');
   // Born Digital Content Model.
-  $born_digital_model = $connection->repository->constructObject('islandora:bornDigitalCModel');
-  $born_digital_model->owner = 'fedoraAdmin';
-  $born_digital_model->label = 'Islandora Born Digital Content Model';
-  $born_digital_model->models = 'fedora-system:ContentModel-3.0';
+  $markup_editor_model = $connection->repository->constructObject('islandora:bornDigitalCModel');
+  $markup_editor_model->owner = 'fedoraAdmin';
+  $markup_editor_model->label = 'Islandora Born Digital Content Model';
+  $markup_editor_model->models = 'fedora-system:ContentModel-3.0';
   // ISLANDORACM Datastream.
-  $datastream = $born_digital_model->constructDatastream('ISLANDORACM', 'X');
+  $datastream = $markup_editor_model->constructDatastream('ISLANDORACM', 'X');
   $datastream->label = 'Islandora content model';
   $datastream->mimetype = 'text/xml';
-  $datastream->setContentFromFile("$module_path/xml/islandora_born_digital_content_model.xml", FALSE);
-  $born_digital_model->ingestDatastream($datastream);
+  $datastream->setContentFromFile("$module_path/xml/islandora_markup_editor_content_model.xml", FALSE);
+  $markup_editor_model->ingestDatastream($datastream);
   // DS-COMPOSITE-MODEL Datastream.
-  $datastream = $born_digital_model->constructDatastream('DS-COMPOSITE-MODEL', 'X');
+  $datastream = $markup_editor_model->constructDatastream('DS-COMPOSITE-MODEL', 'X');
   $datastream->label = 'DS-COMPOSITE-MODEL';
   $datastream->mimetype = 'text/xml';
-  $datastream->setContentFromFile("$module_path/xml/islandora_born_digital_ds_composite_model.xml", FALSE);
-  $born_digital_model->ingestDatastream($datastream);
+  $datastream->setContentFromFile("$module_path/xml/islandora_markup_editor_ds_composite_model.xml", FALSE);
+  $markup_editor_model->ingestDatastream($datastream);
   // Born Digital Collection.
-  $born_digital_collection = $connection->repository->constructObject('islandora:born_digital_collection');
-  $born_digital_collection->owner = 'fedoraAdmin';
-  $born_digital_collection->label = 'Born Digital Collection';
-  $born_digital_collection->models = 'islandora:collectionCModel';
-  $born_digital_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
+  $markup_editor_collection = $connection->repository->constructObject('islandora:born_digital_collection');
+  $markup_editor_collection->owner = 'fedoraAdmin';
+  $markup_editor_collection->label = 'Markup Editor Collection';
+  $markup_editor_collection->models = 'islandora:collectionCModel';
+  $markup_editor_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
   // Collection Policy Datastream.
-  $datastream = $born_digital_collection->constructDatastream('COLLECTION_POLICY', 'X');
+  $datastream = $markup_editor_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
   $datastream->mimetype = 'text/xml';
-  $datastream->setContentFromFile("$module_path/xml/islandora_born_digital_collection_policy.xml", FALSE);
-  $born_digital_collection->ingestDatastream($datastream);
+  $datastream->setContentFromFile("$module_path/xml/islandora_markup_editor_collection_policy.xml", FALSE);
+  $markup_editor_collection->ingestDatastream($datastream);
   // TN Datastream.
-  $datastream = $born_digital_collection->constructDatastream('TN', 'M');
+  $datastream = $markup_editor_collection->constructDatastream('TN', 'M');
   $datastream->label = 'Thumbnail';
   $datastream->mimetype = 'image/png';
   $datastream->setContentFromFile("$module_path/images/folder.png", FALSE);
-  $born_digital_collection->ingestDatastream($datastream);
+  $markup_editor_collection->ingestDatastream($datastream);
   return array(
-    'islandora_born_digital' => array(
-      'title' => 'Islandora born digital',
+    'islandora_markup_editor' => array(
+      'title' => 'Islandora markup editor',
       'objects' => array(
-        $born_digital_model,
-        $born_digital_collection,
+        $markup_editor_model,
+        $markup_editor_collection,
       ),
     ),
   );
@@ -104,11 +104,11 @@ function islandora_born_digital_islandora_required_objects(IslandoraTuque $conne
 /**
  * Implements hook_islandora_xml_form_builder_forms().
  */
-function islandora_born_digital_islandora_xml_form_builder_forms() {
-  $module_path = drupal_get_path('module', 'islandora_born_digital');
+function islandora_markup_editor_islandora_xml_form_builder_forms() {
+  $module_path = drupal_get_path('module', 'islandora_markup_editor');
   return array(
     'Born Digital MODS form' => array(
-      'form_file' => "$module_path/xml/islandora_born_digital_form_mods.xml",
+      'form_file' => "$module_path/xml/islandora_markup_editor_form_mods.xml",
     ),
   );
 }
@@ -116,9 +116,9 @@ function islandora_born_digital_islandora_xml_form_builder_forms() {
 /**
  * Implements hook_islandora_content_model_forms_form_associations().
  */
-function islandora_born_digital_islandora_content_model_forms_form_associations() {
+function islandora_markup_editor_islandora_content_model_forms_form_associations() {
   return array(
-    'islandora_born_digital_mods_form' => array(
+    'islandora_markup_editor_mods_form' => array(
       'content_model' => 'islandora:bornDigitalCModel',
       'form_name' => 'Born Digital MODS form',
       'dsid' => 'MODS',
@@ -132,11 +132,11 @@ function islandora_born_digital_islandora_content_model_forms_form_associations(
 /**
  * Implements hook_theme().
  */
-function islandora_born_digital_theme($existing, $type, $theme, $path) {
+function islandora_markup_editor_theme($existing, $type, $theme, $path) {
   return array(
-    'islandora_born_digital' => array(
-      'template' => 'theme/islandora-born-digital',
-      'pattern' => 'islandora_born_digital__',
+    'islandora_markup_editor' => array(
+      'template' => 'theme/islandora-markup-editor',
+      'pattern' => 'islandora_markup_editor__',
       'variables' => array('islandora_object' => NULL),
     ),
   );
@@ -151,7 +151,7 @@ function islandora_born_digital_theme($existing, $type, $theme, $path) {
  * @return array
  *   The formatted schema array.
  */
-function islandora_born_digital_prepare_schema(AbstractObject $object) {
+function islandora_markup_editor_prepare_schema(AbstractObject $object) {
   $rel = $object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasSchema');
 
   $schema_pid = $rel[0]['object']['value'];
@@ -178,7 +178,7 @@ function islandora_born_digital_prepare_schema(AbstractObject $object) {
 /**
  * Implements hook_preproccess().
  */
-function islandora_born_digital_preprocess_islandora_born_digital(&$variables) {
+function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables) {
   global $base_url;
   global $user;
 
@@ -188,20 +188,20 @@ function islandora_born_digital_preprocess_islandora_born_digital(&$variables) {
   module_load_include('inc', 'php_lib', 'DOMHelpers');
 
   $critical_edition_module_path = drupal_get_path('module', 'islandora_critical_edition');
-  $islandora_born_digital_module_path = drupal_get_path('module', 'islandora_born_digital');
+  $islandora_markup_editor_module_path = drupal_get_path('module', 'islandora_markup_editor');
   dom_document_pretty_print_include_files();
 
   $view = islandora_object_access_callback(ISLANDORA_VIEW_OBJECTS, $variables['islandora_object']);
   $view_edit = islandora_object_access_callback(ISLANDORA_CRITICAL_EDITION_EDIT_WITH_CWRC_WRITER, $variables['islandora_object']);
 
-  drupal_add_js(array('islandora_born_digital' => array('can_edit' => $view_edit)), 'setting');
-  drupal_add_js(array('islandora_born_digital' => array('can_view' => $view)), 'setting');
+  drupal_add_js(array('islandora_markup_editor' => array('can_edit' => $view_edit)), 'setting');
+  drupal_add_js(array('islandora_markup_editor' => array('can_view' => $view)), 'setting');
 
   $schema_object = islandora_critical_edition_construct_schema_config_object();
   drupal_add_js(array('islandora_critical_edition' => array('schema_object' => $schema_object)), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('schema_pref' => 'tei')), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('page_schema' => 'tei')), 'setting');
-  drupal_add_js(array('islandora_critical_edition' => array('page_setup' => "islandora/borndigital/setup/")), 'setting');
+  drupal_add_js(array('islandora_critical_edition' => array('page_setup' => "islandora/markupeditor/setup/")), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('page_pid' => $variables['islandora_object']->id)), 'setting');
 
   $validate_path = variable_get('islandora_critical_edition_validate_url', '/validator/validate.html');
@@ -212,12 +212,12 @@ function islandora_born_digital_preprocess_islandora_born_digital(&$variables) {
   drupal_add_js($critical_edition_module_path . '/CWRC-Writer/src/js/lib/jquery/jquery-1.8.3.js');
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/lib/jquery/jquery-ui-1.9.0.custom.min.js");
 
-  drupal_add_js($islandora_born_digital_module_path . "/js/writer_backend_delegate.js");
-  drupal_add_js($islandora_born_digital_module_path . '/js/jquery/jquery.watermark.min.js');
-  drupal_add_js($islandora_born_digital_module_path . '/js/ContextMenu/jquery.contextMenu.js');
-  drupal_add_js($islandora_born_digital_module_path . '/js/entity_search.js');
-  drupal_add_css($islandora_born_digital_module_path . '/js/ContextMenu/jquery.contextMenu.css');
-  drupal_add_css($islandora_born_digital_module_path . '/css/jquery.miniColors.css');
+  drupal_add_js($islandora_markup_editor_module_path . "/js/writer_backend_delegate.js");
+  drupal_add_js($islandora_markup_editor_module_path . '/js/jquery/jquery.watermark.min.js');
+  drupal_add_js($islandora_markup_editor_module_path . '/js/ContextMenu/jquery.contextMenu.js');
+  drupal_add_js($islandora_markup_editor_module_path . '/js/entity_search.js');
+  drupal_add_css($islandora_markup_editor_module_path . '/js/ContextMenu/jquery.contextMenu.css');
+  drupal_add_css($islandora_markup_editor_module_path . '/css/jquery.miniColors.css');
 
   drupal_add_css($critical_edition_module_path . "/css/islandora_critical_edition_style.css");
   drupal_add_css($critical_edition_module_path . "/css/style.css");
@@ -231,7 +231,7 @@ function islandora_born_digital_preprocess_islandora_born_digital(&$variables) {
   drupal_add_css($critical_edition_module_path . "/css/image_local.css");
   drupal_add_css($critical_edition_module_path . "/CWRC-Writer/src/js/lib/snippet/jquery.snippet.css");
   // Quick fix to make tabs taller in default drupal theme's.
-  drupal_add_css($islandora_born_digital_module_path . "/css/tab_css.css");
+  drupal_add_css($islandora_markup_editor_module_path . "/css/tab_css.css");
 
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/lib/jquery/jquery.layout-latest.min.js");
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/lib/jquery/jquery.layout.resizeTabLayout-1.3.js");
@@ -276,7 +276,7 @@ function islandora_born_digital_preprocess_islandora_born_digital(&$variables) {
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/editor.js");
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/tagger.js");
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/dialog.js");
-  drupal_add_js($islandora_born_digital_module_path . "/js/startup.js");
+  drupal_add_js($islandora_markup_editor_module_path . "/js/startup.js");
   drupal_add_js($critical_edition_module_path . "/js/init.js");
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/lib/tinymce/jquery.tinymce.js");
 }
@@ -287,7 +287,7 @@ function islandora_born_digital_preprocess_islandora_born_digital(&$variables) {
  * @param AbstractObject $fedora_object
  *   Fedora object to provide setup for.
  */
-function islandora_born_digital_setup(AbstractObject $fedora_object) {
+function islandora_markup_editor_setup(AbstractObject $fedora_object) {
   global $user;
   module_load_include('inc', 'islandora_basic_collection', 'includes/utilities');
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
@@ -318,14 +318,14 @@ function islandora_born_digital_setup(AbstractObject $fedora_object) {
 /**
  * Implements hook_CMODEL_PID_islandora_view_object().
  */
-function islandora_born_digital_islandora_bornDigitalCModel_islandora_view_object($object, $page_number, $page_size) {
-  return theme('islandora_born_digital', array('islandora_object' => $object));
+function islandora_markup_editor_islandora_bornDigitalCModel_islandora_view_object($object, $page_number, $page_size) {
+  return theme('islandora_markup_editor', array('islandora_object' => $object));
 }
 
 /**
  * Implements hook_islandora_object_ingested().
  */
-function islandora_born_digital_islandora_bornDigitalCModel_islandora_object_ingested(AbstractObject $object) {
+function islandora_markup_editor_islandora_bornDigitalCModel_islandora_object_ingested(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   // Ensure a relationship exists with a schema.
   $schema_collection = islandora_object_load('islandora:tei_schema_collection');
@@ -336,13 +336,13 @@ function islandora_born_digital_islandora_bornDigitalCModel_islandora_object_ing
 /**
  * Implements hook_islandora_ingest_steps().
  */
-function islandora_born_digital_islandora_bornDigitalCModel_islandora_ingest_steps() {
+function islandora_markup_editor_islandora_bornDigitalCModel_islandora_ingest_steps() {
   return array(
     'islandora_tei_upload' => array(
       'weight' => 10,
       'type' => 'form',
-      'form_id' => 'islandora_born_digital_tei_upload_form',
-      'module' => 'islandora_born_digital',
+      'form_id' => 'islandora_markup_editor_tei_upload_form',
+      'module' => 'islandora_markup_editor',
       'file' => 'includes/tei_upload.form.inc',
     ),
   );
