@@ -103,9 +103,9 @@ function islandora_born_digital_tei_upload_form_submit(array $form, array &$form
   }
   $tei_file = file_load($form_state['values']['file']);
   $tei_path = drupal_realpath($tei_file->uri);
-  $ds->setContentFromFile($tei_path, FALSE);
   $ds->label = $tei_file->filename;
-  $ds->mimetype = $tei_file->filemime;
+  $ds->mimetype = "text/plain";
+  $ds->setContentFromFile($tei_path, FALSE);
 
   if (isset($form_state['values']['text']) && ($form_state['values']['text'] > 0)) {
     if (empty($object['FULL_TEXT'])) {
