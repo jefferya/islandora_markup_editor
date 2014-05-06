@@ -3,7 +3,7 @@ Islandora Solution Pack Born Digital
 
 ## Introduction
 
-Allows for the creation of book and page object (islandora:bookCModel,islandora:pageCModel). Books are essentially a collection Pages, containing only metadata and optionally a PDF file of the book. A Book's PDF can be generated from each page. Pages are based on an uploaded tiff of the page. From the uploaded TIFF its possible to generate images for use in the "Islandora Internet Archive Bookreader". It is also possible to generate PDF files per page. OCR and OCR coordinate data can also be generated from the uploaded TIFF.
+Allows for the creation of born digital content, made to be viewed and edited in the stand alone CWRC-Writer
 
 ## Requirements
 
@@ -11,17 +11,11 @@ This module requires the following modules/libraries:
 
 * [Islandora](https://github.com/islandora/islandora)
 * [Islandora Paged Content](https://github.com/Islandora/islandora_paged_content)
-* [Islandora Large Image Solution Pack](https://github.com/Islandora/islandora_solution_pack_large_image)
+* [Islandora Critical Edition](https://github.com/discoverygarden/islandora_critical_edition)
 
 ## Installation
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
-
-## Configuration
-
-Select configuration options for page derivatives, Parent Solr Field, and select a viewer for the book objec and page objects in Administration » Islandora » Book Collection (admin/islandora/book).
-
-![Configuration](http://i.imgur.com/7ICJfeZ.png)
 
 ## Troubleshooting/Issues
 
