@@ -1,5 +1,5 @@
-name = "Islandora Born Digital"
-description = "Islandora module to handle born digital works"
+name = "Islandora Markup Editor"
+description = "Islandora module to handle born digital markup works"
 dependencies[] = islandora
 dependencies[] = islandora_critical_edition
 package = Islandora Solution Packs

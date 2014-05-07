@@ -1,14 +1,14 @@
 <?php
 /**
  * @file
- * Handles the creation/display of islandora:bornDigitalCModel objects.
+ * Handles the creation/display of islandora:markupEditorCModel objects.
  */
 
 /**
  * Implements hook_menu().
  */
 function islandora_markup_editor_menu() {
-  $items['islandora/borndigital/setup/%islandora_object'] = array(
+  $items['islandora/markupeditor/setup/%islandora_object'] = array(
     'title' => 'Markup Editor Setup',
     'page callback' => 'islandora_markup_editor_setup',
     'page arguments' => array(3),
@@ -55,10 +55,10 @@ function islandora_markup_editor_savedata(AbstractObject $fedora_object) {
  */
 function islandora_markup_editor_islandora_required_objects(IslandoraTuque $connection) {
   $module_path = drupal_get_path('module', 'islandora_markup_editor');
-  // Born Digital Content Model.
-  $markup_editor_model = $connection->repository->constructObject('islandora:bornDigitalCModel');
+  // Markup Editor Content Model.
+  $markup_editor_model = $connection->repository->constructObject('islandora:markupEditorCModel');
   $markup_editor_model->owner = 'fedoraAdmin';
-  $markup_editor_model->label = 'Islandora Born Digital Content Model';
+  $markup_editor_model->label = 'Islandora Markup Editor Content Model';
   $markup_editor_model->models = 'fedora-system:ContentModel-3.0';
   // ISLANDORACM Datastream.
   $datastream = $markup_editor_model->constructDatastream('ISLANDORACM', 'X');
@@ -72,8 +72,8 @@ function islandora_markup_editor_islandora_required_objects(IslandoraTuque $conn
   $datastream->mimetype = 'text/xml';
   $datastream->setContentFromFile("$module_path/xml/islandora_markup_editor_ds_composite_model.xml", FALSE);
   $markup_editor_model->ingestDatastream($datastream);
-  // Born Digital Collection.
-  $markup_editor_collection = $connection->repository->constructObject('islandora:born_digital_collection');
+  // Markup Editor Collection.
+  $markup_editor_collection = $connection->repository->constructObject('islandora:markup_editor_collection');
   $markup_editor_collection->owner = 'fedoraAdmin';
   $markup_editor_collection->label = 'Markup Editor Collection';
   $markup_editor_collection->models = 'islandora:collectionCModel';
@@ -107,7 +107,7 @@ function islandora_markup_editor_islandora_required_objects(IslandoraTuque $conn
 function islandora_markup_editor_islandora_xml_form_builder_forms() {
   $module_path = drupal_get_path('module', 'islandora_markup_editor');
   return array(
-    'Born Digital MODS form' => array(
+    'Markup Editor MODS form' => array(
       'form_file' => "$module_path/xml/islandora_markup_editor_form_mods.xml",
     ),
   );
@@ -119,8 +119,8 @@ function islandora_markup_editor_islandora_xml_form_builder_forms() {
 function islandora_markup_editor_islandora_content_model_forms_form_associations() {
   return array(
     'islandora_markup_editor_mods_form' => array(
-      'content_model' => 'islandora:bornDigitalCModel',
-      'form_name' => 'Born Digital MODS form',
+      'content_model' => 'islandora:markupEditorCModel',
+      'form_name' => 'Markup Editor MODS form',
       'dsid' => 'MODS',
       'title_field' => array('titleInfo', 'title'),
       'transform' => 'mods_to_dc.xsl',
@@ -143,7 +143,7 @@ function islandora_markup_editor_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Prepare a schema for a born digital object, from its RELS-EXT.
+ * Prepare a schema for a markup editor object, from its RELS-EXT.
  *
  * @param AbstractObject $object
  *   The fedora object to load the schema for.
@@ -318,14 +318,14 @@ function islandora_markup_editor_setup(AbstractObject $fedora_object) {
 /**
  * Implements hook_CMODEL_PID_islandora_view_object().
  */
-function islandora_markup_editor_islandora_bornDigitalCModel_islandora_view_object($object, $page_number, $page_size) {
+function islandora_markup_editor_islandora_markupEditorCModel_islandora_view_object($object, $page_number, $page_size) {
   return theme('islandora_markup_editor', array('islandora_object' => $object));
 }
 
 /**
  * Implements hook_islandora_object_ingested().
  */
-function islandora_markup_editor_islandora_bornDigitalCModel_islandora_object_ingested(AbstractObject $object) {
+function islandora_markup_editor_islandora_markupEditorCModel_islandora_object_ingested(AbstractObject $object) {
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   // Ensure a relationship exists with a schema.
   $schema_collection = islandora_object_load('islandora:tei_schema_collection');
@@ -336,7 +336,7 @@ function islandora_markup_editor_islandora_bornDigitalCModel_islandora_object_in
 /**
  * Implements hook_islandora_ingest_steps().
  */
-function islandora_markup_editor_islandora_bornDigitalCModel_islandora_ingest_steps() {
+function islandora_markup_editor_islandora_markupEditorCModel_islandora_ingest_steps() {
   return array(
     'islandora_tei_upload' => array(
       'weight' => 10,

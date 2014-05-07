@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<content_model xmlns="http://www.islandora.ca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Born Digital Content Model" xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
+<content_model xmlns="http://www.islandora.ca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Islandora Markup Content Model" xsi:schemaLocation="http://www.islandora.ca http://localhost/islandoracm.xsd">
   <mimetypes>
     <type>text/plain</type>
   </mimetypes>

@@ -1,14 +1,14 @@
 BUILD STATUS
 ------------
 Current build status:
-[![Build Status](https://travis-ci.org/MorganDawe/islandora_solution_pack_born_digital.png?branch=7.x.cwrcps-4)](https://travis-ci.org/MorganDawe/islandora_solution_pack_born_digital)
+[![Build Status](https://travis-ci.org/MorganDawe/islandora_markup_editor.png?branch=7.x.cwrcps-4)](https://travis-ci.org/MorganDawe/islandora_markup_editor)
 
-Islandora Solution Pack Born Digital
+Islandora Markup Editor
 ====================================
 
 ## Introduction
 
-Allows for the creation of born digital content, made to be viewed and edited in the stand alone CWRC-Writer
+Allows for the creation of born digital markup content, made to be viewed and edited in the stand alone CWRC-Writer
 
 ## Requirements
 

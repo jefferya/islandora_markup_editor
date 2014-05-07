@@ -86,7 +86,7 @@ function islandoraBackendDelegate(config) {
    */
   this.loadDocument = function(callback) {
     // So, lets enable read only mode conditionally.
-    if (!Drupal.settings.islandora_born_digital.can_edit) {
+    if (!Drupal.settings.islandora_markup_editor.can_edit) {
       writer.layout.hide("north");
       // Hide the tinyMCE controll bar.
       $('#editor_toolbargroup').hide();
@@ -115,7 +115,7 @@ function islandoraBackendDelegate(config) {
    * @param callback Called with one boolean parameter: true for successful save, false otherwise
    */
   this.saveDocument = function(callback) {
-    if (!Drupal.settings.islandora_born_digital.can_edit) {
+    if (!Drupal.settings.islandora_markup_editor.can_edit) {
       writer.dialogs.show('message', {
         title: 'Please Authenticate',
         msg: 'You do not possess the sufficient permissions to edit this data.',
@@ -128,13 +128,13 @@ function islandoraBackendDelegate(config) {
     var docText = writer.fm.getDocumentContent(true);
     
     $.ajax({
-      url: window.parent.Drupal.settings.basePath + 'islandora/borndigital/save_data/' + PID,// + '/' + writer.schemas[writer.schemaId]['pid'],
+      url: window.parent.Drupal.settings.basePath + 'islandora/markupeditor/save_data/' + PID,// + '/' + writer.schemas[writer.schemaId]['pid'],
       type: 'POST', 
       async: false,
       dataType: 'text',
       data: {
         "text": docText,
-        "valid": true,//islandoraCWRCWriter.Writer.get_is_doc_valid(1),
+        "valid": true,
       },
       success: function(data, status, xhr) {
     	  console.log("save success");
@@ -169,12 +169,12 @@ function islandoraBackendDelegate(config) {
     switch (name) {
       case 'highlightEntity_looseFocus':
         if ($(data).hasClass('txtimglnk')) {
-          islandoraCWRCWriter.Writer.Extensions.text_image_linking_hide_highlight(data);
+          //islandoraCWRCWriter.Writer.Extensions.text_image_linking_hide_highlight(data);
         }
         break;
       case 'highlightEntity_gainFocus':
         if ($(data).hasClass('txtimglnk')) {
-          islandoraCWRCWriter.Writer.Extensions.text_image_linking_show_highlight(data);
+          //islandoraCWRCWriter.Writer.Extensions.text_image_linking_show_highlight(data);
         }
         break;
       case 'editor_settingsChanged' :
