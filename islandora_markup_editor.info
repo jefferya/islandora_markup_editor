@@ -1,8 +1,0 @@
-name = "Islandora Markup Editor"
-description = "Islandora module to handle born digital markup works"
-dependencies[] = islandora
-dependencies[] = islandora_critical_edition
-package = Islandora Solution Packs
-core = 7.x
-version = 7.x-dev
-
