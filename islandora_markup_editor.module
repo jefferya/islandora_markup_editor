@@ -163,6 +163,15 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
   global $base_url;
   global $user;
 
+  // To Clarify the purpose of this preprocessor, it is the first step in
+  // abstracting a stand alone cwrc writer implementation, without assumptions on content
+  // models. This viewer has no annotations, shared canvas or header navigation
+  // controls. Its intent is to be a stand alone, base cwrc editor. Further
+  // extraction from islandora_critical_edition adds the CWRC-Writer code base as
+  // a library, implemented here, and themed where needed (such as islandora_critical_edition).
+  // In the end, this will allow us to treat CWRC-Writer as a true library, and
+  // will be easily updateable. In the future, a module could use this editor via
+  // the theme layer, and use its own startup.js to kick off any special module needs.
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/schema_table_utils');
@@ -186,7 +195,6 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
   drupal_add_js(array('islandora_critical_edition' => array('page_pid' => $variables['islandora_object']->id)), 'setting');
 
   $validate_path = variable_get('islandora_critical_edition_validate_url', '/validator/validate.html');
-  drupal_add_js(array('islandora_critical_edition' => array('base_url' => $base_url)), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('validate_path' => $validate_path)), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('module_base' => $critical_edition_module_path)), 'setting');
 
@@ -195,6 +203,7 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
 
   drupal_add_js($islandora_markup_editor_module_path . "/js/writer_backend_delegate.js");
   drupal_add_js($islandora_markup_editor_module_path . '/js/jquery/jquery.watermark.min.js');
+  // Context menu required for entity window.
   drupal_add_js($islandora_markup_editor_module_path . '/js/ContextMenu/jquery.contextMenu.js');
   drupal_add_js($islandora_markup_editor_module_path . '/js/entity_search.js');
   drupal_add_css($islandora_markup_editor_module_path . '/js/ContextMenu/jquery.contextMenu.css');

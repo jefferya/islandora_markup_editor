@@ -12,6 +12,7 @@
   </dsTypeModel>
   <dsTypeModel ID="OBJ" optional="false">
     <form MIME="text/plain"/>
+    <form MIME="text/xml"/>
   </dsTypeModel>
     <dsTypeModel ID="TRANSCRIPTION" optional="false">
     <form MIME="text/xml"/>
