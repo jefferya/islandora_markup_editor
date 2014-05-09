@@ -44,9 +44,9 @@ function islandoraBackendDelegate(config) {
    */
   this.validate = function(callback) {
     var docText = writer.fm.getDocumentContent(false);
-    var usr_schema = get_schema_id_for_pid(Drupal.settings.islandora_critical_edition.schema_pref['schema_pid']);
+    var usr_schema = writer.schemas[writer.schemaId];
     // Always validate against the prefered schema.
-    var schemaUrl = usr_schema['url'];
+    var schemaUrl = usr_schema.url;
     $.ajax({
       url: Drupal.settings.islandora_critical_edition.validate_path,
       type: 'POST',
@@ -57,7 +57,6 @@ function islandoraBackendDelegate(config) {
         content: docText
       },
       success: function(data, status, xhr) {
-        islandoraCWRCWriter.Writer.set_is_doc_valid(1);
         if (callback) {
           var valid = $('status', data).text() == 'pass';
           callback.call(writer, valid);
@@ -66,7 +65,6 @@ function islandoraBackendDelegate(config) {
         }
       },
       error: function() {
-        islandoraCWRCWriter.Writer.set_is_doc_valid(1);
         writer.dialogs.show('message', {
           title: 'Error',
           msg: 'An error occurred while trying to validate the document.',
