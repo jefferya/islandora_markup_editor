@@ -1,7 +1,7 @@
 BUILD STATUS
 ------------
 Current build status:
-[![Build Status](https://travis-ci.org/MorganDawe/islandora_markup_editor.png?branch=7.x.cwrcps-4)](https://travis-ci.org/MorganDawe/islandora_markup_editor)
+[![Build Status](https://travis-ci.org/discoverygarden/islandora_markup_editor.png?branch=7.x.cwrcps-4)](https://travis-ci.org/discoverygarden/islandora_markup_editor)
 
 Islandora Markup Editor
 ====================================

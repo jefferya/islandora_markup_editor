@@ -42,6 +42,7 @@ function islandora_markup_editor_savedata(AbstractObject $fedora_object) {
   // Update ds.
   if (!isset($fedora_object["OBJ"])) {
     $obj_ds = $fedora_object->constructDatastream('OBJ', 'M');
+    $fedora_object->ingestDatastream($obj_ds);
   }
   else {
     $obj_ds = $fedora_object["OBJ"];
