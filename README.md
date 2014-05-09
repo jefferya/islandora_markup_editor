@@ -21,6 +21,7 @@ This module requires the following modules/libraries:
 ## Installation
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
+Ensure islandora_critical_edition is installed and configured, as well as its validation.war (validation) service is deployed.
 
 ## Troubleshooting/Issues
 
