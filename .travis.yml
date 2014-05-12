@@ -16,13 +16,13 @@ before_install:
   - export ISLANDORA_DIR=$HOME/islandora
   - $HOME/islandora/tests/scripts/travis_setup.sh
   - cd $HOME/drupal-*
-  - ln -s $TRAVIS_BUILD_DIR sites/all/modules/islandora_born_digital
+  - ln -s $TRAVIS_BUILD_DIR sites/all/modules/islandora_markup_editor
   - ln -s $HOME/islandora_critical_edition sites/all/modules/islandora_critical_edition
 
-  - drush en --yes --user=1 islandora_born_digital
+  - drush en --yes --user=1 islandora_markup_editor
 script:
-  - ant -buildfile sites/all/modules/islandora_born_digital/build.xml lint
-  - $ISLANDORA_DIR/tests/scripts/line_endings.sh sites/all/modules/islandora_born_digital
-  - drush coder-review --reviews=production,security,style,i18n,potx,sniffer islandora_born_digital
-  - phpcpd --names *.module,*.inc,*.test sites/all/modules/islandora_born_digital
-
+  - ant -buildfile sites/all/modules/islandora_markup_editor/build.xml lint
+  - $ISLANDORA_DIR/tests/scripts/line_endings.sh sites/all/modules/islandora_markup_editor
+  - drush coder-review --reviews=production,security,style,i18n,potx,sniffer islandora_markup_editor
+  - phpcpd --names *.module,*.inc,*.test sites/all/modules/islandora_markup_editor
+  

@@ -1,7 +1,7 @@
 BUILD STATUS
 ------------
 Current build status:
-[![Build Status](https://travis-ci.org/MorganDawe/islandora_markup_editor.png?branch=7.x.cwrcps-4)](https://travis-ci.org/MorganDawe/islandora_markup_editor)
+[![Build Status](https://travis-ci.org/discoverygarden/islandora_markup_editor.png?branch=7.x)](https://travis-ci.org/discoverygarden/islandora_markup_editor)
 
 Islandora Markup Editor
 ====================================
@@ -21,6 +21,7 @@ This module requires the following modules/libraries:
 ## Installation
 
 Install as usual, see [this](https://drupal.org/documentation/install/modules-themes/modules-7) for further information.
+Ensure islandora_critical_edition is installed and configured, as well as its validation.war (validation) service is deployed.
 
 ## Troubleshooting/Issues
 

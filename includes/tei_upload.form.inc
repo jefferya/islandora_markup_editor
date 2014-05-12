@@ -20,20 +20,20 @@ function islandora_markup_editor_tei_upload_form(array $form, array &$form_state
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
   $extensions = array('xml txt');
   $form = array();
+  $file_size = array($upload_size * 1024 * 1024);
   $form['file'] = array(
     '#title' => t('TEI File'),
     '#type' => 'managed_file',
     '#required' => TRUE,
-    '#description' => t('Select file to upload.<br/>Files must be less than <b>@size MB.</b><br/>Allowed file types: <b>@ext.</b>', array('@size' => $upload_size, '@ext' => $extensions[0])),
+    '#description' => t('Select file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <b>@ext.</b>', array('@size' => $upload_size, '@ext' => $extensions[0])),
     '#default_value' => isset($form_state['values']['files']) ? $form_state['values']['files'] : NULL,
     '#upload_location' => 'temporary://',
     '#upload_validators' => array(
       'file_validate_extensions' => $extensions,
       // Assume it's specified in MB.
-      'file_validate_size' => array($upload_size * 1024 * 1024),
+      'file_validate_size' => $file_size,
     ),
   );
-
   $form['islandora_markup_editor_text_upload'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add text file to this upload?"),
@@ -49,7 +49,7 @@ function islandora_markup_editor_tei_upload_form(array $form, array &$form_state
     '#upload_validators' => array(
       'file_validate_extensions' => array('txt'),
       // Assume it's specified in MB.
-      'file_validate_size' => array($upload_size * 1024 * 1024),
+      'file_validate_size' => $file_size,
     ),
     '#states' => array(
       'visible' => array(
@@ -66,13 +66,13 @@ function islandora_markup_editor_tei_upload_form(array $form, array &$form_state
     '#title' => t('Thumbnail for object'),
     '#type' => 'managed_file',
     '#required' => FALSE,
-    '#description' => t('Select text file to upload.<br/>Files must be less than <b>@size MB.</b><br/>Allowed file types: <b>@ext.</b><br />This file is optional.', array('@size' => $upload_size, '@ext' => 'txt')),
+    '#description' => t('Select text file to upload.<br/>Files must be less than <strong>@size MB.</strong><br/>Allowed file types: <strong>@ext.</strong><br />This file is optional.', array('@size' => $upload_size, '@ext' => 'jpg, jpeg, png')),
     '#default_value' => isset($form_state['values']['files']) ? $form_state['values']['files'] : NULL,
     '#upload_location' => 'temporary://',
     '#upload_validators' => array(
       'file_validate_extensions' => array('jpg jpeg png'),
       // Assume it's specified in MB.
-      'file_validate_size' => array($upload_size * 1024 * 1024),
+      'file_validate_size' => $file_size,
     ),
     '#states' => array(
       'visible' => array(
@@ -121,23 +121,23 @@ function islandora_markup_editor_tei_upload_form_submit(array $form, array &$for
     $ds->label = $text_file->filename;
     $ds->mimetype = $text_file->filemime;
   }
-  $tn_file = file_load($form_state['values']['tn']);
-  if (isset($tn_file->uri)) {
-    $tn_path = drupal_realpath($tn_file->uri);
-    $imagick = new Imagick($tn_path);
-    $imagick->thumbnailimage(150, NULL);
-    $imagick->setimagefilename($tn_path);
-    $imagick->writeimage();
 
+  if ($form_state['values']['tn']) {
+    $thumbnail_file = file_load($form_state['values']['tn']);
+    islandora_scale_thumbnail($thumbnail_file, 200, 200);
     if (empty($object['TN'])) {
-      $ds = $object->constructDatastream('TN', 'M');
-      $object->ingestDatastream($ds);
+      $tn = $object->constructDatastream('TN', 'M');
+      $object->ingestDatastream($tn);
     }
     else {
-      $ds = $object['TN'];
+      $tn = $object['TN'];
     }
-    $ds->setContentFromFile($tn_path, FALSE);
-    $ds->label = $tn_file->filename;
-    $ds->mimetype = $tn_file->filemime;
+    $tn->setContentFromFile(drupal_realpath($thumbnail_file->uri), FALSE);
+    if ($tn->label != $thumbnail_file->filename) {
+      $tn->label = $thumbnail_file->filename;
+    }
+    if ($tn->mimetype != $thumbnail_file->filemime) {
+      $tn->mimetype = $thumbnail_file->filemime;
+    }
   }
 }

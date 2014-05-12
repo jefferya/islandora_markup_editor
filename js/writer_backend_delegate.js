@@ -43,40 +43,35 @@ function islandoraBackendDelegate(config) {
    * @param callback function.
    */
   this.validate = function(callback) {
-	  callback.call(writer, true);
-	  // TODO: uncomment code when validator.war is deployed to the box.
-
-//    var docText = writer.fm.getDocumentContent(false);
-//    var usr_schema = get_schema_id_for_pid(Drupal.settings.islandora_critical_edition.schema_pref['schema_pid']);
-//    // Always validate against the prefered schema.
-//    var schemaUrl = usr_schema['url'];
-//    $.ajax({
-//      url: Drupal.settings.islandora_critical_edition.validate_path,
-//      type: 'POST',
-//      dataType: 'XML',
-//      data: {
-//        sch: window.location.protocol + '//' + window.location.host + schemaUrl,
-//        type: 'RNG_XML',
-//        content: docText
-//      },
-//      success: function(data, status, xhr) {
-//        islandoraCWRCWriter.Writer.set_is_doc_valid(1);
-//        if (callback) {
-//          var valid = $('status', data).text() == 'pass';
-//          callback.call(writer, valid);
-//        } else {
-//          writer.validation.showValidationResult(data, docText);
-//        }
-//      },
-//      error: function() {
-//        islandoraCWRCWriter.Writer.set_is_doc_valid(0);
-//        writer.dialogs.show('message', {
-//          title: 'Error',
-//          msg: 'An error occurred while trying to validate the document.',
-//          type: 'error'
-//        });
-//      }
-//    });
+    var docText = writer.fm.getDocumentContent(false);
+    var usr_schema = writer.schemas[writer.schemaId];
+    // Always validate against the prefered schema.
+    var schemaUrl = usr_schema.url;
+    $.ajax({
+      url: Drupal.settings.islandora_critical_edition.validate_path,
+      type: 'POST',
+      dataType: 'XML',
+      data: {
+        sch: window.location.protocol + '//' + window.location.host + schemaUrl,
+        type: 'RNG_XML',
+        content: docText
+      },
+      success: function(data, status, xhr) {
+        if (callback) {
+          var valid = $('status', data).text() == 'pass';
+          callback.call(writer, valid);
+        } else {
+          writer.validation.showValidationResult(data, docText);
+        }
+      },
+      error: function() {
+        writer.dialogs.show('message', {
+          title: 'Error',
+          msg: 'An error occurred while trying to validate the document.',
+          type: 'error'
+        });
+      }
+    });
   };
 
   /**

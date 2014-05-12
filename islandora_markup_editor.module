@@ -34,20 +34,34 @@ function islandora_markup_editor_menu() {
  *   The fedora object
  */
 function islandora_markup_editor_savedata(AbstractObject $fedora_object) {
-  // @codingStandardsIgnoreStart
-  $data = html_entity_decode(stripslashes(check_plain($_POST['text'])), ENT_QUOTES, 'UTF-8');
-  $cwrc = str_replace('<br>', '<br />', $data);
-  // @codingStandardsIgnoreEnd
-  $cwrc = str_replace('&', '&amp;', $cwrc);
-  // Update ds.
-  if (!isset($fedora_object["OBJ"])) {
-    $obj_ds = $fedora_object->constructDatastream('OBJ', 'M');
+  try {
+    // @codingStandardsIgnoreStart
+    $data = html_entity_decode(stripslashes(check_plain($_POST['text'])), ENT_QUOTES, 'UTF-8');
+    $cwrc = str_replace('<br>', '<br />', $data);
+    // @codingStandardsIgnoreEnd
+    $cwrc = str_replace('&', '&amp;', $cwrc);
+    // Update ds.
+    if (!isset($fedora_object["OBJ"])) {
+      $obj_ds = $fedora_object->constructDatastream('OBJ', 'M');
+      $fedora_object->ingestDatastream($obj_ds);
+    }
+    else {
+      $obj_ds = $fedora_object["OBJ"];
+    }
+    $obj_ds->setContentFromString($cwrc);
+    drupal_json_output($cwrc);
+  } catch (Exception $e) {
+    watchdog('islandora_markup_editor',
+      'Failed to set OBJ datastream content for pid @pid</br>code: @code<br/>message: @msg',
+      array(
+        '@pid' => $fedora_object->id,
+        '@code' => $e->getCode(),
+        '@msg' => $e->getMessage(),
+      ),
+      WATCHDOG_ERROR
+    );
+    drupal_json_output(array("Error" => "An error occured updating "));
   }
-  else {
-    $obj_ds = $fedora_object["OBJ"];
-  }
-  $obj_ds->setContentFromString($cwrc);
-  drupal_json_output($cwrc);
 }
 
 /**
@@ -60,12 +74,6 @@ function islandora_markup_editor_islandora_required_objects(IslandoraTuque $conn
   $markup_editor_model->owner = 'fedoraAdmin';
   $markup_editor_model->label = 'Islandora Markup Editor Content Model';
   $markup_editor_model->models = 'fedora-system:ContentModel-3.0';
-  // ISLANDORACM Datastream.
-  $datastream = $markup_editor_model->constructDatastream('ISLANDORACM', 'X');
-  $datastream->label = 'Islandora content model';
-  $datastream->mimetype = 'text/xml';
-  $datastream->setContentFromFile("$module_path/xml/islandora_markup_editor_content_model.xml", FALSE);
-  $markup_editor_model->ingestDatastream($datastream);
   // DS-COMPOSITE-MODEL Datastream.
   $datastream = $markup_editor_model->constructDatastream('DS-COMPOSITE-MODEL', 'X');
   $datastream->label = 'DS-COMPOSITE-MODEL';
@@ -77,7 +85,7 @@ function islandora_markup_editor_islandora_required_objects(IslandoraTuque $conn
   $markup_editor_collection->owner = 'fedoraAdmin';
   $markup_editor_collection->label = 'Markup Editor Collection';
   $markup_editor_collection->models = 'islandora:collectionCModel';
-  $markup_editor_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', 'islandora:root');
+  $markup_editor_collection->relationships->add(FEDORA_RELS_EXT_URI, 'isMemberOfCollection', variable_get('islandora_repository_pid', 'islandora:root'));
   // Collection Policy Datastream.
   $datastream = $markup_editor_collection->constructDatastream('COLLECTION_POLICY', 'X');
   $datastream->label = 'Collection policy';
@@ -143,45 +151,21 @@ function islandora_markup_editor_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Prepare a schema for a markup editor object, from its RELS-EXT.
- *
- * @param AbstractObject $object
- *   The fedora object to load the schema for.
- *
- * @return array
- *   The formatted schema array.
- */
-function islandora_markup_editor_prepare_schema(AbstractObject $object) {
-  $rel = $object->relationships->get(ISLANDORA_RELS_EXT_URI, 'hasSchema');
-
-  $schema_pid = $rel[0]['object']['value'];
-  $schema = islandora_object_load($schema_pid);
-
-  $rdf_datastream = $schema['RDF-SCHEMA'];
-  $css_datastream = $schema['RDF-CSS'];
-
-  $schema_dc = new DublinCore($schema['DC']->content);
-  $all_titles = $schema_dc->dc->dc['dc:title'];
-
-  return array(
-    'schemas' => array(
-      "tei" => array(
-        "name" => $all_titles[0],
-        "url" => url("islandora/object/$schema_pid/datastream/RDF-SCHEMA/view/$rdf_datastream->label"),
-        "cssUrl" => url("islandora/object/$schema_pid/datastream/RDF-CSS/view/$css_datastream->label"),
-        "pid" => $schema_pid,
-      ),
-    ),
-  );
-}
-
-/**
  * Implements hook_preproccess().
  */
 function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables) {
   global $base_url;
   global $user;
 
+  // To Clarify the purpose of this preprocessor, it is the first step in
+  // abstracting a stand alone cwrc writer implementation, without assumptions on content
+  // models. This viewer has no annotations, shared canvas or header navigation
+  // controls. Its intent is to be a stand alone, base cwrc editor. Further
+  // extraction from islandora_critical_edition adds the CWRC-Writer code base as
+  // a library, implemented here, and themed where needed (such as islandora_critical_edition).
+  // In the end, this will allow us to treat CWRC-Writer as a true library, and
+  // will be easily updateable. In the future, a module could use this editor via
+  // the theme layer, and use its own startup.js to kick off any special module needs.
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/schema_table_utils');
@@ -205,7 +189,6 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
   drupal_add_js(array('islandora_critical_edition' => array('page_pid' => $variables['islandora_object']->id)), 'setting');
 
   $validate_path = variable_get('islandora_critical_edition_validate_url', '/validator/validate.html');
-  drupal_add_js(array('islandora_critical_edition' => array('base_url' => $base_url)), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('validate_path' => $validate_path)), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('module_base' => $critical_edition_module_path)), 'setting');
 
@@ -214,6 +197,7 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
 
   drupal_add_js($islandora_markup_editor_module_path . "/js/writer_backend_delegate.js");
   drupal_add_js($islandora_markup_editor_module_path . '/js/jquery/jquery.watermark.min.js');
+  // Context menu required for entity window.
   drupal_add_js($islandora_markup_editor_module_path . '/js/ContextMenu/jquery.contextMenu.js');
   drupal_add_js($islandora_markup_editor_module_path . '/js/entity_search.js');
   drupal_add_css($islandora_markup_editor_module_path . '/js/ContextMenu/jquery.contextMenu.css');
@@ -320,17 +304,6 @@ function islandora_markup_editor_setup(AbstractObject $fedora_object) {
  */
 function islandora_markup_editor_islandora_markupEditorCModel_islandora_view_object($object, $page_number, $page_size) {
   return theme('islandora_markup_editor', array('islandora_object' => $object));
-}
-
-/**
- * Implements hook_islandora_object_ingested().
- */
-function islandora_markup_editor_islandora_markupEditorCModel_islandora_object_ingested(AbstractObject $object) {
-  module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
-  // Ensure a relationship exists with a schema.
-  $schema_collection = islandora_object_load('islandora:tei_schema_collection');
-  $schema = islandora_critical_edition_construct_schema_config_object();
-  $object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasSchema', $schema['schemas']['tei']['pid'], RELS_TYPE_PLAIN_LITERAL);
 }
 
 /**
