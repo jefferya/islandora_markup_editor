@@ -25,3 +25,4 @@ script:
   - $ISLANDORA_DIR/tests/scripts/line_endings.sh sites/all/modules/islandora_markup_editor
   - drush coder-review --reviews=production,security,style,i18n,potx,sniffer islandora_markup_editor
   - phpcpd --names *.module,*.inc,*.test sites/all/modules/islandora_markup_editor
+  
