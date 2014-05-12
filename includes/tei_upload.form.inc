@@ -34,7 +34,14 @@ function islandora_markup_editor_tei_upload_form(array $form, array &$form_state
       'file_validate_size' => $file_size,
     ),
   );
-
+  $form['schema'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Schema URL'),
+    '#description' => t('The schemas endpoint to use while validating and parsing this document (This url will be appended to your provided tei file above).'),
+    '#size' => 60,
+    '#maxlength' => 600,
+    '#required' => FALSE,
+  );
   $form['islandora_markup_editor_text_upload'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add text file to this upload?"),
@@ -108,6 +115,10 @@ function islandora_markup_editor_tei_upload_form_submit(array $form, array &$for
   $ds->mimetype = "text/plain";
   $ds->setContentFromFile($tei_path, FALSE);
 
+  if (isset($form_state['values']['schema'])) {
+    // We need to add this schema url as an xml namespace.
+    //dsm
+  }
   if (isset($form_state['values']['text']) && ($form_state['values']['text'] > 0)) {
     if (empty($object['FULL_TEXT'])) {
       $ds = $object->constructDatastream('FULL_TEXT', 'M');

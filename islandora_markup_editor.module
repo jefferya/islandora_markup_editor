@@ -74,12 +74,6 @@ function islandora_markup_editor_islandora_required_objects(IslandoraTuque $conn
   $markup_editor_model->owner = 'fedoraAdmin';
   $markup_editor_model->label = 'Islandora Markup Editor Content Model';
   $markup_editor_model->models = 'fedora-system:ContentModel-3.0';
-  // ISLANDORACM Datastream.
-  $datastream = $markup_editor_model->constructDatastream('ISLANDORACM', 'X');
-  $datastream->label = 'Islandora content model';
-  $datastream->mimetype = 'text/xml';
-  $datastream->setContentFromFile("$module_path/xml/islandora_markup_editor_content_model.xml", FALSE);
-  $markup_editor_model->ingestDatastream($datastream);
   // DS-COMPOSITE-MODEL Datastream.
   $datastream = $markup_editor_model->constructDatastream('DS-COMPOSITE-MODEL', 'X');
   $datastream->label = 'DS-COMPOSITE-MODEL';
@@ -310,17 +304,6 @@ function islandora_markup_editor_setup(AbstractObject $fedora_object) {
  */
 function islandora_markup_editor_islandora_markupEditorCModel_islandora_view_object($object, $page_number, $page_size) {
   return theme('islandora_markup_editor', array('islandora_object' => $object));
-}
-
-/**
- * Implements hook_islandora_object_ingested().
- */
-function islandora_markup_editor_islandora_markupEditorCModel_islandora_object_ingested(AbstractObject $object) {
-  module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
-  // Ensure a relationship exists with a schema.
-  $schema_collection = islandora_object_load('islandora:tei_schema_collection');
-  $schema = islandora_critical_edition_construct_schema_config_object();
-  $object->relationships->add(ISLANDORA_RELS_EXT_URI, 'hasSchema', $schema['schemas']['tei']['pid'], RELS_TYPE_PLAIN_LITERAL);
 }
 
 /**
