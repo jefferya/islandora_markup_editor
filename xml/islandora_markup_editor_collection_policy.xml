@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<collection_policy xmlns="http://www.islandora.ca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Islandora markup editor collection" xsi:schemaLocation="http://www.islandora.ca">
+  <content_models>
+    <content_model dsid="DS-COMPOSITE-MODEL" name="Islandora markup editor collection" namespace="islandora" pid="islandora:markupEditorCModel"/>
+  </content_models>
+  <search_terms/>
+  <relationship>isMemberOfCollection</relationship>
+</collection_policy>
