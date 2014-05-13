@@ -180,6 +180,7 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
 
   drupal_add_js(array('islandora_markup_editor' => array('can_edit' => $view_edit)), 'setting');
   drupal_add_js(array('islandora_markup_editor' => array('can_view' => $view)), 'setting');
+  drupal_add_js(array('islandora_markup_editor' => array('entities_search_callback' => url('islandora/entities/search'))), 'setting');
 
   $schema_object = islandora_critical_edition_construct_schema_config_object();
   drupal_add_js(array('islandora_critical_edition' => array('schema_object' => $schema_object)), 'setting');
@@ -191,7 +192,6 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
   $validate_path = variable_get('islandora_critical_edition_validate_url', '/validator/validate.html');
   drupal_add_js(array('islandora_critical_edition' => array('validate_path' => $validate_path)), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('module_base' => $critical_edition_module_path)), 'setting');
-
   drupal_add_js($critical_edition_module_path . '/CWRC-Writer/src/js/lib/jquery/jquery-1.8.3.js');
   drupal_add_js($critical_edition_module_path . "/CWRC-Writer/src/js/lib/jquery/jquery-ui-1.9.0.custom.min.js");
 
