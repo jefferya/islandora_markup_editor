@@ -166,6 +166,7 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
   // In the end, this will allow us to treat CWRC-Writer as a true library, and
   // will be easily updateable. In the future, a module could use this editor via
   // the theme layer, and use its own startup.js to kick off any special module needs.
+  module_load_include('inc', 'islandora_markup_editor', 'includes/utilities');
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/schema_table_utils');
@@ -181,7 +182,17 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
   drupal_add_js(array('islandora_markup_editor' => array('can_edit' => $view_edit)), 'setting');
   drupal_add_js(array('islandora_markup_editor' => array('can_view' => $view)), 'setting');
 
+  // Construct available schemas.
   $schema_object = islandora_critical_edition_construct_schema_config_object();
+  $doc_process_instructions = islandora_markup_editor_fetch_tei_processing_instruction($variables['islandora_object']);
+
+  $schema_object['schemas']['doc_default'] = array(
+    'cssUrl' => $schema_object['schemas']['tei']['cssUrl'],
+    'name' => 'Document Default Schema',
+    'pid' => 'islandora:NA',
+    'url' => $doc_process_instructions['href'],
+  );
+
   drupal_add_js(array('islandora_critical_edition' => array('schema_object' => $schema_object)), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('schema_pref' => 'tei')), 'setting');
   drupal_add_js(array('islandora_critical_edition' => array('page_schema' => 'tei')), 'setting');
@@ -303,6 +314,9 @@ function islandora_markup_editor_setup(AbstractObject $fedora_object) {
  * Implements hook_CMODEL_PID_islandora_view_object().
  */
 function islandora_markup_editor_islandora_markupEditorCModel_islandora_view_object($object, $page_number, $page_size) {
+  module_load_include('inc', 'islandora_markup_editor', 'includes/utilities');
+  $instructions = islandora_markup_editor_fetch_tei_processing_instruction($object);
+  dsm($instructions, "full instructions");
   return theme('islandora_markup_editor', array('islandora_object' => $object));
 }
 

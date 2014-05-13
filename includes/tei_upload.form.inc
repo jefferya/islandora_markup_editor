@@ -34,6 +34,12 @@ function islandora_markup_editor_tei_upload_form(array $form, array &$form_state
       'file_validate_size' => $file_size,
     ),
   );
+  $form['rng_schema'] = array(
+    '#type' => 'textfield',
+    '#title' => t('RNG Schema URL'),
+    '#size' => 60,
+    '#required' => FALSE,
+  );
   $form['islandora_markup_editor_text_upload'] = array(
     '#type' => 'checkbox',
     '#title' => t("Add text file to this upload?"),
@@ -93,6 +99,8 @@ function islandora_markup_editor_tei_upload_form(array $form, array &$form_state
  *   The drupal form state.
  */
 function islandora_markup_editor_tei_upload_form_submit(array $form, array &$form_state) {
+  module_load_include('inc', 'islandora_markup_editor', 'includes/utilities');
+
   $object = $form_state['islandora']['objects'][0];
   if (empty($object['OBJ'])) {
     $ds = $object->constructDatastream('OBJ', 'M');
@@ -106,6 +114,9 @@ function islandora_markup_editor_tei_upload_form_submit(array $form, array &$for
   $ds->label = $tei_file->filename;
   $ds->mimetype = "text/plain";
   $ds->setContentFromFile($tei_path, FALSE);
+
+  // Add the schema as a <?xml-model processing instruction in the tei stream.
+  islandora_markup_editor_add_tei_processing_instruction($object, $form_state['values']['rng_schema']);
 
   if (isset($form_state['values']['text']) && ($form_state['values']['text'] > 0)) {
     if (empty($object['FULL_TEXT'])) {
