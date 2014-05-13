@@ -1,7 +1,7 @@
 function lookup_entity(query) {
   var results;
   $.ajax({
-    url: Drupal.settings.islandora_image_annotation.entities_search_callback+ '/' + query,
+    url: Drupal.settings.islandora_markup_editor.entities_search_callback+ '/' + query,
     async: false,
     dataType: 'json',
     success: function(data, status, xhr) {
