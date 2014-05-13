@@ -47,7 +47,7 @@ function islandoraBackendDelegate(config) {
     var usr_schema = writer.schemas[writer.schemaId];
     // Always validate against the prefered schema.
     var schemaUrl = usr_schema.url;
-    if (writer.schemaId == "tei") {
+    if (writer.schemaId != "doc_default") {
       schemaUrl = window.location.protocol + '//' + window.location.host + schemaUrl
     }
     $.ajax({

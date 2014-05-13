@@ -28,11 +28,14 @@ $(function() {
       config.project = data;
       writer = new Writer(config);
       writer.currentDocId = PID;
-      writer.schemaId = "tei";
+      writer.schemaId = "doc_default";
       writer.init();
+      
+      console.log(writer.schemaId);
       // Close the UIPanes.
       writer.layout.hide("east");
       writer.layout.toggle("west");
+      
     },
     error: function() {
       console.log("Error");

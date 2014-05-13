@@ -31,10 +31,10 @@ function islandora_markup_editor_fetch_tei_processing_instruction(AbstractObject
 
 function islandora_markup_editor_add_tei_processing_instruction(AbstractObject $object, $schema) {
   if ($schema == "") {
-    // Default Schema.
-    $schema = 'http://cwrc.ca/schema/workflow.rng';
+    $critical_edition_module_path = drupal_get_path('module', 'islandora_critical_edition');
+    // Use the CWRC-TEIBasic.rng provided with the cwrc-writer by default.
+    $schema = url($critical_edition_module_path . "/CWRC-Writer/src/schema/CWRC-TEIBasic.rng");
   }
-  dsm($schema, "setting schema to: ");
   $xml_data = $object['OBJ']->content;
   $srcDoc = new DOMDocument;
   $srcDoc->preserveWhiteSpace = false;
@@ -53,8 +53,6 @@ function islandora_markup_editor_add_tei_processing_instruction(AbstractObject $
   }
 
   $trimmed = trim($processing_string);
-
-  dsm($trimmed, "trimmed");
   $rng_schema = $srcDoc->createProcessingInstruction('xml-model', $trimmed);
   $srcDoc->appendChild($rng_schema);
   $object['OBJ']->setContentFromString($srcDoc->saveXML());
