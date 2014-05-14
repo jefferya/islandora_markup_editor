@@ -50,7 +50,8 @@ function islandora_markup_editor_savedata(AbstractObject $fedora_object) {
     }
     $obj_ds->setContentFromString($cwrc);
     drupal_json_output($cwrc);
-  } catch (Exception $e) {
+  }
+  catch (Exception $e) {
     watchdog('islandora_markup_editor',
       'Failed to set OBJ datastream content for pid @pid</br>code: @code<br/>message: @msg',
       array(
@@ -157,15 +158,19 @@ function islandora_markup_editor_preprocess_islandora_markup_editor(&$variables)
   global $base_url;
   global $user;
 
-  // To Clarify the purpose of this preprocessor, it is the first step in
-  // abstracting a stand alone cwrc writer implementation, without assumptions on content
-  // models. This viewer has no annotations, shared canvas or header navigation
-  // controls. Its intent is to be a stand alone, base cwrc editor. Further
-  // extraction from islandora_critical_edition adds the CWRC-Writer code base as
-  // a library, implemented here, and themed where needed (such as islandora_critical_edition).
-  // In the end, this will allow us to treat CWRC-Writer as a true library, and
-  // will be easily updateable. In the future, a module could use this editor via
-  // the theme layer, and use its own startup.js to kick off any special module needs.
+  // To Clarify the purpose of this preprocessor, it
+  // is the first step in abstracting a stand alone
+  // cwrc writer implementation, without assumptions
+  // on content models. This viewer has no annotations,
+  // shared canvas or header navigation controls. Its
+  // intent is to be a stand alone, base cwrc editor. Further
+  // extraction from islandora_critical_edition adds the
+  // CWRC-Writer code base as a library, implemented here,
+  // and themed where needed (such as islandora_critical_edition).
+  // In the end, this will allow us to treat CWRC-Writer as a
+  // true library, and will be easily updateable. In the future,
+  // a module could use this editor via the theme layer, and use
+  // its own startup.js to kick off any special module needs.
   module_load_include('inc', 'islandora_markup_editor', 'includes/utilities');
   module_load_include('inc', 'islandora_paged_content', 'includes/utilities');
   module_load_include('inc', 'islandora_critical_edition', 'includes/utilities');
@@ -315,8 +320,6 @@ function islandora_markup_editor_setup(AbstractObject $fedora_object) {
  */
 function islandora_markup_editor_islandora_markupEditorCModel_islandora_view_object($object, $page_number, $page_size) {
   module_load_include('inc', 'islandora_markup_editor', 'includes/utilities');
-  $instructions = islandora_markup_editor_fetch_tei_processing_instruction($object);
-  dsm($instructions, "full instructions");
   return theme('islandora_markup_editor', array('islandora_object' => $object));
 }
 
