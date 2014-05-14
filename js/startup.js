@@ -30,8 +30,6 @@ $(function() {
       writer.currentDocId = PID;
       writer.schemaId = "doc_default";
       writer.init();
-      
-      console.log(writer.schemaId);
       // Close the UIPanes.
       writer.layout.hide("east");
       writer.layout.toggle("west");
