@@ -47,12 +47,15 @@ function islandoraBackendDelegate(config) {
     var usr_schema = writer.schemas[writer.schemaId];
     // Always validate against the prefered schema.
     var schemaUrl = usr_schema.url;
+    if (writer.schemaId != "doc_default") {
+      schemaUrl = window.location.protocol + '//' + window.location.host + schemaUrl
+    }
     $.ajax({
       url: Drupal.settings.islandora_critical_edition.validate_path,
       type: 'POST',
       dataType: 'XML',
       data: {
-        sch: window.location.protocol + '//' + window.location.host + schemaUrl,
+        sch: schemaUrl,
         type: 'RNG_XML',
         content: docText
       },
@@ -123,7 +126,7 @@ function islandoraBackendDelegate(config) {
     var docText = writer.fm.getDocumentContent(true);
     
     $.ajax({
-      url: window.parent.Drupal.settings.basePath + 'islandora/markupeditor/save_data/' + PID,// + '/' + writer.schemas[writer.schemaId]['pid'],
+      url: window.parent.Drupal.settings.basePath + 'islandora/markupeditor/save_data/' + PID,
       type: 'POST', 
       async: false,
       dataType: 'text',
@@ -173,8 +176,9 @@ function islandoraBackendDelegate(config) {
         }
         break;
       case 'editor_settingsChanged' :
-        //TODO: May want this to update dynamically, but could break the document load/cwrc datastream.
-        //islandoraCWRCWriter.Writer.set_user_schema();
+        var docText = writer.getDocument();
+        writer.schemaId = data['schemaId'];
+        writer.loadDocument(docText);
         break;
     }
   };
