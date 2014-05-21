@@ -45,17 +45,12 @@ function islandoraBackendDelegate(config) {
   this.validate = function(callback) {
     var docText = writer.fm.getDocumentContent(false);
     var usr_schema = writer.schemas[writer.schemaId];
-    // Always validate against the prefered schema.
-    var schemaUrl = usr_schema.url;
-    if (writer.schemaId != "doc_default") {
-      schemaUrl = window.location.protocol + '//' + window.location.host + schemaUrl
-    }
     $.ajax({
       url: Drupal.settings.islandora_critical_edition.validate_path,
       type: 'POST',
       dataType: 'XML',
       data: {
-        sch: schemaUrl,
+        sch: usr_schema.url,
         type: 'RNG_XML',
         content: docText
       },
@@ -124,7 +119,7 @@ function islandoraBackendDelegate(config) {
     
     writer.mode == writer.XMLRDF;
     var docText = writer.fm.getDocumentContent(true);
-    
+    var usr_schema = writer.schemas[writer.schemaId];
     $.ajax({
       url: window.parent.Drupal.settings.basePath + 'islandora/markupeditor/save_data/' + PID,
       type: 'POST', 
@@ -133,6 +128,7 @@ function islandoraBackendDelegate(config) {
       data: {
         "text": docText,
         "valid": true,
+        "schema": usr_schema.url,
       },
       success: function(data, status, xhr) {
     	  console.log("save success");
