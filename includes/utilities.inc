@@ -55,10 +55,9 @@ function islandora_markup_editor_fetch_tei_processing_instruction(AbstractObject
  */
 function islandora_markup_editor_add_tei_processing_instruction(AbstractObject $object, $schema, $dsid = 'OBJ') {
   if ($schema == "") {
-    global $base_url;
     $critical_edition_module_path = drupal_get_path('module', 'islandora_critical_edition');
     // Use the CWRC-TEIBasic.rng provided with the cwrc-writer by default.
-    $schema = url("$base_url/$critical_edition_module_path/CWRC-Writer/src/schema/CWRC-TEIBasic.rng");
+    $schema = file_create_url("$critical_edition_module_path/CWRC-Writer/src/schema/CWRC-TEIBasic.rng");
   }
   $xml_data = $object[$dsid]->content;
   $src_doc = new DOMDocument();
