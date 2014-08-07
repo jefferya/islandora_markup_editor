@@ -112,7 +112,7 @@ function islandora_markup_editor_tei_upload_form_submit(array $form, array &$for
   $tei_file = file_load($form_state['values']['file']);
   $tei_path = drupal_realpath($tei_file->uri);
   $ds->label = $tei_file->filename;
-  $ds->mimetype = "text/plain";
+  $ds->mimetype = $tei_file->filemime;
   $ds->setContentFromFile($tei_path, FALSE);
 
   // Add the schema as a <?xml-model processing instruction in the tei stream.
