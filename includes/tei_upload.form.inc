@@ -112,11 +112,17 @@ function islandora_markup_editor_tei_upload_form_submit(array $form, array &$for
   $tei_file = file_load($form_state['values']['file']);
   $tei_path = drupal_realpath($tei_file->uri);
   $ds->label = $tei_file->filename;
-  $ds->mimetype = $tei_file->filemime;
+  $ds->mimetype = $tei_file->filemime; 
   $ds->setContentFromFile($tei_path, FALSE);
 
-  // Add the schema as a <?xml-model processing instruction in the tei stream.
-  islandora_markup_editor_add_tei_processing_instruction($object, $form_state['values']['rng_schema']);
+
+  $result = islandora_markup_editor_query_for_processing_instruction($object['OBJ']->content);
+  if ($result->length == 0) {
+    // No processing instruction, add the default.
+    // Add the schema as a <?xml-model processing instruction in the 
+    //tei stream.
+    islandora_markup_editor_add_tei_processing_instruction($object, $form_state['values']['rng_schema']);
+  }
 
   if (isset($form_state['values']['text']) && ($form_state['values']['text'] > 0)) {
     if (empty($object['FULL_TEXT'])) {
