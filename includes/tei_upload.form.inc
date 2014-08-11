@@ -18,7 +18,7 @@
  */
 function islandora_markup_editor_tei_upload_form(array $form, array &$form_state) {
   $upload_size = min((int) ini_get('post_max_size'), (int) ini_get('upload_max_filesize'));
-  $extensions = array('xml txt');
+  $extensions = array('xml');
   $form = array();
   $file_size = array($upload_size * 1024 * 1024);
   $form['file'] = array(
@@ -112,7 +112,8 @@ function islandora_markup_editor_tei_upload_form_submit(array $form, array &$for
   $tei_file = file_load($form_state['values']['file']);
   $tei_path = drupal_realpath($tei_file->uri);
   $ds->label = $tei_file->filename;
-  $ds->mimetype = $tei_file->filemime; 
+  // mimetype assumes only xml file extensions and "readible" xml
+  $ds->mimetype = "text/xml"; 
   $ds->setContentFromFile($tei_path, FALSE);
 
 
